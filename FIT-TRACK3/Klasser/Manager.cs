@@ -13,7 +13,7 @@ namespace FIT_TRACK3.Klasser
     {
         private readonly List<User> _users = new List<User>();
 
-        public bool RegisterUser(string username, string password, string country)
+        internal bool RegisterUser(string username, string password, string country)
         {
             if (_users.Any(u => u.UserName.Equals(username, StringComparison.OrdinalIgnoreCase)))
             {
@@ -30,9 +30,26 @@ namespace FIT_TRACK3.Klasser
             _users.Add(newUser);
             return true; // registreringen lyckades
         }
-        public User SignIn(string username, string password)
+        internal User SignIn(string username, string password)
         {
-            return _users.FirstOrDefault(u => u.UserName.Equals(username, StringComparison.OrdinalIgnoreCase) && u.Password == password);
+            var user = FindUser(username);
+
+            if (user != null && ValidatePassword(user, password))
+            {
+                return user;
+            }
+
+            return null;
+        }
+
+        private User FindUser(string username)
+        {
+            return _users.FirstOrDefault(u => u.UserName.Equals(username, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private bool ValidatePassword(User user, string password)
+        {
+            return user.Password == password; // Här kan du lägga till mer avancerad logik, t.ex. hashning
         }
 
 

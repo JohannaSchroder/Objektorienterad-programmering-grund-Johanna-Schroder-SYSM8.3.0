@@ -23,7 +23,7 @@ namespace FIT_TRACK3
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private UserService userService;
+        UserService userService;
         public MainWindow()
         {
             InitializeComponent();
@@ -37,14 +37,26 @@ namespace FIT_TRACK3
             this.Close();
         }
 
-        private void LogIn_Click(object sender, RoutedEventArgs e)
+        private string _usernamebox;
+        public string UserNameBox
+        {
+            get { return _usernamebox; }
+            set { _usernamebox = value; OnPropertyChanged();}
+        }
+        private string _passwordbox;
+        public string PasswordBox
+        {
+            get { return _passwordbox; }
+            set { _passwordbox = value; OnPropertyChanged();}
+        }
+
+        private void LogIn_Click(object sender, RoutedEventArgs e)//tar en till WorkoutWindow 
         {
             var username = UserName.Text;
-            var password = PassWord.Password;
+            var password = PassWord.Text;
 
-            if (userService.SignIn(username, password))
+            if (userService.SignIn(username, password)
             {
-                // öppna WorkoutsWindow
                 WorkoutWindow workoutWindow = new WorkoutWindow();
                 workoutWindow.Show();
                 this.Close();

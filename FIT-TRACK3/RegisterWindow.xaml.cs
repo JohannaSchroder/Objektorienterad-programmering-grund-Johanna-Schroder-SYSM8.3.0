@@ -40,30 +40,55 @@ namespace FIT_TRACK3
             get { return _valtLand; }
             set { _valtLand = value; OnPropertyChanged(nameof(ValtLand)); }
         }
+        private string _usernameinput;
+        public string UserNameInput
+        {
+            get { return _usernameinput; }
+            set { _usernameinput = value; OnPropertyChanged(); }
+        }
+        private string _passwordinput;
+        public string PasswordInput
+        {
+            get { return _passwordinput; }
+            set { _passwordinput = value; OnPropertyChanged(); }
+        }
+        private string _confirmedpassword;
+        public string ConfirmedPassword
+        {
+            get { return _confirmedpassword; }
+            set { _confirmedpassword = value; OnPropertyChanged(); }
+        }
+
+
+
 
         private void btnSignUp_Click(object sender, RoutedEventArgs e)
         {
-            var username = UserNameinput.Text;
-            var password = PasswordInput.Password;
-
-            if (ValtLand.SelectedItem is string country)
+            if (string.IsNullOrWhiteSpace(UserNameInput) ||
+                string.IsNullOrWhiteSpace(PasswordInput) ||
+                string.IsNullOrWhiteSpace(ConfirmedPassword) ||
+                string.IsNullOrWhiteSpace(ValtLand))
             {
-                if (userService.RegisterUser(username, password, country))
-                {
-                    MessageBox.Show("Registrering lyckades!");
-                    // Stäng registreringsfönstret och öppna huvudfönstret
-                    var mainWindow = new MainWindow();
-                    mainWindow.Show();
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Användarnamnet är upptaget!");
-                }
+                MessageBox.Show("Du måste fylla i alla fält!");
+                return;
             }
-            else
+            if (PasswordInput != ConfirmedPassword)
             {
-                MessageBox.Show("Vänligen välj ett land.");
+                MessageBox.Show("Dina lösenord matchar inte");
+                return;
+            }
+            try
+            {
+                userService.RegisterUser(UserNameInput, PasswordInput, ValtLand);
+                MessageBox.Show($"Du är registrerad {UserNameInput} och kan logga in!");
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+                Application.Current.Windows.OfType<RegisterWindow>().First().Close();
+            }
+            catch
+            {
+                MessageBox.Show("Gör ett nytt försök, något gick fel!");
+                return;
             }
         }
 

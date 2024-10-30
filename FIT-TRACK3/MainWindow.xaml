@@ -43,7 +43,7 @@
             HorizontalAlignment="Center" 
             VerticalAlignment="Center"  
             FontSize="20"/>
-            <TextBox 
+            <TextBox
             x:Name="PassWord"
             Text="{Binding PasswordBox, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
             Width="200" Height="30" 
