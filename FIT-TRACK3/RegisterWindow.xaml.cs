@@ -1,7 +1,10 @@
 ﻿using FIT_TRACK3.Klasser;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,32 +21,57 @@ namespace FIT_TRACK3
     /// <summary>
     /// Interaction logic for RegisterWindow.xaml
     /// </summary>
-    public partial class RegisterWindow : Window
+    public partial class RegisterWindow : Window, INotifyPropertyChanged
     {
-
+        UserService userService;
+        public ObservableCollection<string> Land { get; set; }
         public RegisterWindow()
         {
             InitializeComponent();
+            DataContext= this;
+            userService = new UserService();
+            Land = new ObservableCollection<string> { "Sweden" };
         }
-        UserControl userControl = new UserControl();
+
+        private string _valtLand;
+
+        public string ValtLand
+        {
+            get { return _valtLand; }
+            set { _valtLand = value; OnPropertyChanged(nameof(ValtLand)); }
+        }
+
         private void btnSignUp_Click(object sender, RoutedEventArgs e)
         {
-            var username = UserNameInput.Text;
+            var username = UserNameinput.Text;
             var password = PasswordInput.Password;
-            var country = Land.SelectedItem.ToString();
 
-            if (userControl.RegisterUser(username, password, country))
+            if (ValtLand.SelectedItem is string country)
             {
-                MessageBox.Show("Registrering lyckades!");
-                // Stäng registreringsfönstret och öppna huvudfönstret
-                var mainWindow = new MainWindow();
-                mainWindow.Show();
-                this.Close();
+                if (userService.RegisterUser(username, password, country))
+                {
+                    MessageBox.Show("Registrering lyckades!");
+                    // Stäng registreringsfönstret och öppna huvudfönstret
+                    var mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Användarnamnet är upptaget!");
+                }
             }
             else
             {
-                MessageBox.Show("Användarnamnet är upptaget!");
+                MessageBox.Show("Vänligen välj ett land.");
             }
+        }
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

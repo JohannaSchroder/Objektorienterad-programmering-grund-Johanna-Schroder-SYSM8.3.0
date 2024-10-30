@@ -1,6 +1,9 @@
-﻿using System;
+﻿using FIT_TRACK3.Klasser;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,11 +21,13 @@ namespace FIT_TRACK3
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private UserService userService;
         public MainWindow()
         {
             InitializeComponent();
+            userService = new UserService();
         }
 
         private void SignUp_Click(object sender, RoutedEventArgs e)//Tar en till registreringsidan
@@ -34,20 +39,28 @@ namespace FIT_TRACK3
 
         private void LogIn_Click(object sender, RoutedEventArgs e)
         {
-            var username = UserNameBox.Text;
-            var password = PasswordBox.Password;
+            var username = UserName.Text;
+            var password = PassWord.Password;
 
-            if (_userService.LogIn(username, password))
+            if (userService.SignIn(username, password))
             {
-                // Öppna WorkoutsWindow
-                var workoutsWindow = new WorkoutsWindow(username);
-                workoutsWindow.Show();
+                // öppna WorkoutsWindow
+                WorkoutWindow workoutWindow = new WorkoutWindow();
+                workoutWindow.Show();
                 this.Close();
             }
             else
             {
                 MessageBox.Show("Fel användarnamn eller lösenord");
             }
+        }
+
+
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
